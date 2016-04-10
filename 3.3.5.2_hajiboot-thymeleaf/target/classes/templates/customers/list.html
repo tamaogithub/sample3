@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout">
+<head>
+    <title>メッセージ一覧</title>
+</head>
+<body>
+
+<div layout:fragment="content" class="col-sm-12">
+    <form th:action="@{/customers/create}" th:object="${customerForm}" class="form-horizontal" method="post"><!--（１） -->
+        <fieldset>
+            <legend>メッセージ情報作成</legend>
+            <div class="form-group" th:classappend="${#fields.hasErrors('lastName')}? 'has-error has-feedback'">
+                <label for="lastName" class="col-sm-2 control-label">メッセージタイトル</label>
+
+                <div class="col-sm-10">
+                    <input type="text" id="lastName" name="lastName" th:field="*{lastName}"
+                           class="form-control" value="メッセージタイトル"/>
+                        <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"
+                              class="help-block">error!</span>
+                </div>
+            </div>
+            <div class="form-group" th:classappend="${#fields.hasErrors('firstName')}? 'has-error has-feedback'">
+                <label for="firstName" class="col-sm-2 control-label">メッセージ内容</label>
+
+                <div class="col-sm-10">
+                    <input type="text" id="firstName" name="firstName" th:field="*{firstName}"
+                           class="form-control" value="太郎"/>
+                        <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"
+                              class="help-block">error!</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-primary">作成</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+    <hr/>
+
+<!--  <div class="container">
+    <nav class="clearfix" th:fragment="pagination">
+        <ul class="pagination">
+            <li th:class="${!pagination.hasPrev()} ? disabled">
+                <a href="javascript:void(0);" aria-label="Previous" th:href="${pagination.hasPrev()} ? ${pagination.getUrlForOtherPage(#httpServletRequest, pagination.getPage() - 1)} : 'javascript:void(0);'">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li th:each="page : ${pagination.getPages()}" th:class="${page == pagination.getPage()} ? 'active' : (${page == -1} ? 'disabled')">
+                <a href="javascript:void(0);" th:if="${page != -1}" th:text="${page}" th:href="${page != pagination.getPage()} ? ${pagination.getUrlForOtherPage(#httpServletRequest, page)} : 'javascript:void(0);'">1</a>
+                <a href="javascript:void(0);" th:unless="${page != -1}" th:text="...">...</a>
+            </li>
+            <li th:class="${!pagination.hasNext()} ? disabled">
+                <a href="javascript:void(0)" aria-label="Next" th:href="${pagination.hasNext()} ? ${pagination.getUrlForOtherPage(#httpServletRequest, pagination.getPage() + 1)} : 'javascript:void(0);'">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div> -->
+
+<!-- <script src="../../resources/bower_components/jquery/dist/jquery.min.js" th:src="@{/bower_components/jquery/dist/jquery.min.js}"></script>
+<script src="../../resources/bower_components/bootstrap/dist/js/bootstrap.min.js" th:src="@{/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script> -->
+    
+　　　<table class="table table-striped table-bordered table-condensed">
+        <tr>
+            <td>メッセージ一覧（１ページ5件まで）</td>
+            <td><p th:text="${currentResults.getSize()}">1ページのデータ数</p></td>
+            <td><p th:text="${currentResults.getNumber()}">現在のページ</p></td>
+            <td><p th:text="${currentResults.getTotalPages()}">全ページ数</p></td>
+            <td><p th:text="${currentResults.getTotalElements()}">全データ数</p></td>
+            
+            
+            <td> 5/18件</td>
+        </tr>
+　　 </table>
+    <table class="table table-striped table-bordered table-condensed">
+
+        <tr>
+            <th>ID</th>
+            <th>メッセージタイトル</th>
+            <th>メッセージ内容</th>
+            <th colspan="2">編集</th>
+        </tr>
+        <tr th:each="customer : ${customers}">
+            <td th:text="${customer.id}">100</td>
+            <td th:text="${customer.lastName}">メッセージタイトル</td>
+            <td th:text="${customer.firstName}">メッセージ内容</td>
+            <td>
+                <form th:action="@{/customers/edit}" method="get">
+                    <input class="btn btn-default" type="submit" name="form" value="編集"/>
+                    <input type="hidden" name="id" th:value="${customer.id}"/>
+                </form>
+            </td>
+            <td>
+                <form th:action="@{/customers/delete}" method="post">
+                    <input class="btn btn-danger" type="submit" value="削除"/>
+                    <input type="hidden" name="id" th:value="${customer.id}"/>
+                </form>
+            </td>
+        </tr>
+    </table>
+    
+    <div class="row">
+	    <div class="col-md-12 text-center">
+	        <div class='pagination pagination-centered'>
+	            <ul class="pagination">
+	                <li th:class="${currentIndex == 1}? 'disabled' : ''">
+	                    <span th:if='${currentIndex == 1}'>← First</span>
+	                    <a th:if='${currentIndex != 1}'
+	                       th:href="@{${url+'/page/1'}}">← First</a>
+	                </li>
+	                <li th:class="${currentIndex != 1}? '' : 'disabled'">
+	                    <span th:if='${currentIndex == 1}'>«</span>
+	                    <a th:if='${currentIndex != 1}'
+	                       th:href="@{${url+'/page/'+ (currentIndex - 1)}}"
+	                       title='Go to previous page'>«</a>
+	                </li>
+	
+	                <li th:each="item : ${#numbers.sequence(beginIndex,endIndex)}"
+	                    th:class="${item == currentIndex ? 'active' : '' }">
+	
+	                    <span th:if='${item == currentIndex}' th:text='${item}'>1</span>
+	
+	                    <a th:if='${item != currentIndex}'
+	                       th:href="@{${url+'/page/'+item }}">
+	                        <span th:text='${item}'>1</span>
+	                    </a>
+	                </li>
+	
+	                <li th:class="${currentIndex != currentResults.totalPages}? '' : 'disabled'">
+	                    <span th:if='${currentIndex == currentResults.totalPages}'>»</span>
+	                    <a th:if='${currentIndex != currentResults.totalPages}'
+	                       th:href="@{${url+'/page/'+(currentIndex + 1)}}" title='Go to next page'>»</a>
+	                </li>
+	                <li th:class="${currentIndex == currentResults.totalPages}? 'disabled' : ''">
+	                    <span th:if='${currentIndex == currentResults.totalPages}'>Last →</span>
+	                    <a th:if='${currentIndex != currentResults.totalPages}'
+	                       th:href="@{${url+'/page/'+ currentResults.totalPages}}">Last →</a>
+	                </li>
+	            </ul>
+	        </div>
+	    </div>
+	</div>
+	
+<!-- <div class='pagination pagination-centered'>
+    <nav class="clearfix" th:fragment="pagination">
+        <ul class="pagination">
+            <li th:class="${!pagination.hasPrev()} ? disabled">
+                <a href="javascript:void(0);" aria-label="Previous" th:href="${pagination.hasPrev()} ? ${pagination.getUrlForOtherPage(#httpServletRequest, pagination.getPage() - 1)} : 'javascript:void(0);'">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li th:each="page : ${pagination.getPages()}" th:class="${page == pagination.getPage()} ? 'active' : (${page == -1} ? 'disabled')">
+                <a href="javascript:void(0);" th:if="${page != -1}" th:text="${page}" th:href="${page != pagination.getPage()} ? ${pagination.getUrlForOtherPage(#httpServletRequest, page)} : 'javascript:void(0);'">1</a>
+                <a href="javascript:void(0);" th:unless="${page != -1}" th:text="...">...</a>
+            </li>
+            <li th:class="${!pagination.hasNext()} ? disabled">
+                <a href="javascript:void(0)" aria-label="Next" th:href="${pagination.hasNext()} ? ${pagination.getUrlForOtherPage(#httpServletRequest, pagination.getPage() + 1)} : 'javascript:void(0);'">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div> -->
+	
+	
+	
+	            
+</div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="3.3.5.2_hajiboot-thymeleaf">
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/java"/>
+        <property name="context-root" value="3.3.5.2_hajiboot-thymeleaf"/>
+        <property name="java-output-path" value="/3.3.5.2_hajiboot-thymeleaf/target/classes"/>
+    </wb-module>
+</project-modules>
